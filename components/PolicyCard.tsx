@@ -62,6 +62,11 @@ export function PolicyCard({ result }: PolicyCardProps) {
             {policy_title}
           </h3>
           <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+            {result.topic && (
+              <span className="mr-1.5 inline-block rounded bg-brand-50 px-1.5 py-0.5 text-xs font-semibold text-brand-700 dark:bg-brand-900/40 dark:text-brand-300">
+                {result.topic}
+              </span>
+            )}
             {CATEGORY_LABEL[category] ?? category}
             {agency && ` · ${agency}`}
           </p>
@@ -124,8 +129,10 @@ export function PolicyCard({ result }: PolicyCardProps) {
             ].join(" ")}
           >
             <span className="font-semibold">신청 마감: </span>
-            {application_deadline}
-            {deadlineImminent && " (임박)"}
+            {formatDeadline(application_deadline)}
+            {deadlineDays(application_deadline) != null && (
+              <span className="ml-1">({deadlineDays(application_deadline)}일 남음)</span>
+            )}
           </p>
         )}
 
@@ -209,6 +216,20 @@ function compactReasons(reasons: string[]): string[] {
     return [`나이 만 ${a}~${b}세 충족`, ...reasons.filter((r) => r !== minR && r !== maxR)];
   }
   return reasons;
+}
+
+function deadlineDays(deadline: string): number | null {
+  const days = Math.ceil((Date.parse(deadline) - Date.now()) / 86_400_000);
+  return Number.isNaN(days) ? null : days;
+}
+
+function formatDeadline(deadline: string): string {
+  const days = deadlineDays(deadline);
+  const date = new Date(deadline);
+  if (Number.isNaN(date.getTime())) return deadline;
+  const formatted = `${date.getMonth() + 1}월 ${date.getDate()}일`;
+  if (days != null && days <= 7) return `${formatted} (임박)`;
+  return formatted;
 }
 
 function isDeadlineImminent(deadline: string | null): boolean {
