@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { DisplayControls } from "@/components/DisplayControls";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -11,7 +12,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ko" className="scroll-smooth">
-      <body className="font-sans">{children}</body>
+      <body className="font-sans">
+        <DisplayControls />
+        {children}
+      </body>
     </html>
   );
 }

@@ -1,7 +1,7 @@
-import type { TriState } from "@policy-search/contracts";
+import type { MatchStatus } from "@policy-search/contracts";
 
 const VERDICT: Record<
-  TriState,
+  MatchStatus,
   { label: string; className: string; dot: string }
 > = {
   eligible: {
@@ -22,7 +22,7 @@ const VERDICT: Record<
 };
 
 interface BadgeProps {
-  state: TriState;
+  state: MatchStatus;
   className?: string;
 }
 
