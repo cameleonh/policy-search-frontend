@@ -24,4 +24,6 @@ pnpm install
 pnpm dev
 ```
 
-Backend API is expected at `http://localhost:8000` (set `NEXT_PUBLIC_API_BASE_URL` to override).
+The frontend proxies search requests through its own `/api/search` route to the
+FastAPI backend (`POST /v1/search`). Set `API_URL` to override the backend origin
+(default `http://localhost:8000`).

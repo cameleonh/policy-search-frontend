@@ -1,0 +1,9 @@
+# Keep image-scannable source out of the build context. .next, node_modules,
+# and env locals are rebuilt inside the image.
+.git
+.next
+.node_modules
+node_modules
+.env
+.env*.local
+.preview

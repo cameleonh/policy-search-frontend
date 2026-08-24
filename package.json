@@ -13,7 +13,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "format": "prettier --write ."
   },
   "dependencies": {

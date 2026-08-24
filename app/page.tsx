@@ -1,21 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import type { SearchProfile, SearchResult } from "@policy-search/contracts";
+import type {
+  PolicyResult,
+  SearchProfile,
+  SearchResponse,
+} from "@policy-search/contracts";
 import { SearchProfileForm } from "@/components/SearchProfileForm";
 import { PolicyCard } from "@/components/PolicyCard";
 
-interface SearchResponse {
-  data_version: string;
-  results: SearchResult[];
-  total: number;
-  page: number;
-  page_size: number;
-  rag_enabled: boolean;
-}
-
 export default function HomePage() {
-  const [results, setResults] = useState<SearchResult[]>([]);
+  const [results, setResults] = useState<PolicyResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
@@ -24,9 +19,8 @@ export default function HomePage() {
   async function handleSearch(profile: SearchProfile) {
     setLoading(true);
     setError(null);
-    const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
     try {
-      const res = await fetch(`${base}/api/search`, {
+      const res = await fetch("/api/search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(profile),
@@ -84,7 +78,7 @@ export default function HomePage() {
             </p>
             <div className="space-y-4">
               {results.map((result) => (
-                <PolicyCard key={result.policyVersion.programId} result={result} />
+                <PolicyCard key={result.result_id} result={result} />
               ))}
             </div>
           </>

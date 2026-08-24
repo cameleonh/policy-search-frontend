@@ -8,6 +8,7 @@ const __dirname = path.dirname(__filename);
 const compat = new FlatCompat({ baseDirectory: __dirname });
 
 const config = [
+  { ignores: [".next/**", "out/**", "node_modules/**"] },
   ...compat.extends("next/core-web-vitals"),
   {
     languageOptions: {

@@ -29,15 +29,15 @@ export function SearchProfileForm({ onSubmit, loading = false }: SearchProfileFo
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     onSubmit({
-      birthDate: birthDate || undefined,
+      birth_date: birthDate || undefined,
       region: region || undefined,
-      employmentStatus: employmentStatus || undefined,
-      incomeBracket: incomeBracket || undefined,
-      isBusinessOwner,
-      businessRegion: businessRegion || undefined,
+      employment_status: employmentStatus || undefined,
+      income_bracket: incomeBracket || undefined,
+      is_business_owner: isBusinessOwner,
+      business_region: businessRegion || undefined,
       industry: industry || undefined,
-      annualRevenue: annualRevenue ? Number(annualRevenue) : undefined,
-      employeeCount: employeeCount ? Number(employeeCount) : undefined,
+      annual_revenue: annualRevenue ? Number(annualRevenue) : undefined,
+      employee_count: employeeCount ? Number(employeeCount) : undefined,
     });
   }
 
