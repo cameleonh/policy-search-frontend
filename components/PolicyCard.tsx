@@ -178,7 +178,7 @@ function DetailGrid({ detail }: { detail: PolicyDetail }) {
     ["신청 기간", period],
     ["나이", age],
     ["고용 상태", detail.employment.length > 0 ? detail.employment.join(", ") : null],
-    ["소득 기준", detail.income_max ? `연소득 ${Number(detail.income_max).toLocaleString()}원 이하` : null],
+    ["소득 기준", detail.income_max ? `연소득 ${Number(detail.income_max).toLocaleString()}만원 이하` : null],
     ["지역", detail.region],
     ["학력", detail.education],
   ];
