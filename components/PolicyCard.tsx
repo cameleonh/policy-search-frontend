@@ -82,10 +82,18 @@ export function PolicyCard({ result }: PolicyCardProps) {
 
       <div className="px-5 pb-5">
         {reasons.length > 0 && (
-          <ul className="space-y-1.5 text-sm text-neutral-700 dark:text-neutral-300">
-            {reasons.map((reason, i) => (
-              <li key={i} className="flex gap-2">
-                <span className="mt-1 text-eligible-solid" aria-hidden="true">✓</span>
+          <ul className="flex flex-wrap gap-1.5">
+            {compactReasons(reasons).map((reason, i) => (
+              <li
+                key={i}
+                className={[
+                  "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset",
+                  reason.includes("충족")
+                    ? "bg-eligible-bg text-eligible-text ring-eligible-border"
+                    : "bg-neutral-100 text-neutral-600 ring-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:ring-neutral-700",
+                ].join(" ")}
+              >
+                <span aria-hidden="true">{reason.includes("충족") ? "✓" : "•"}</span>
                 <span>{reason}</span>
               </li>
             ))}
@@ -190,6 +198,17 @@ function DetailGrid({ detail }: { detail: PolicyDetail }) {
       ))}
     </dl>
   );
+}
+
+function compactReasons(reasons: string[]): string[] {
+  const minR = reasons.find((r) => /나이 조건 충족 \(만 (\d+)세 이상\)/.test(r));
+  const maxR = reasons.find((r) => /나이 조건 충족 \(만 (\d+)세 이하\)/.test(r));
+  if (minR && maxR) {
+    const a = minR.match(/만 (\d+)세/)?.[1] ?? "?";
+    const b = maxR.match(/만 (\d+)세/)?.[1] ?? "?";
+    return [`나이 만 ${a}~${b}세 충족`, ...reasons.filter((r) => r !== minR && r !== maxR)];
+  }
+  return reasons;
 }
 
 function isDeadlineImminent(deadline: string | null): boolean {

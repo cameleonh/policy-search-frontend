@@ -9,6 +9,26 @@ import {
 import type { SearchProfile } from "@policy-search/contracts";
 import { Button } from "./Button";
 
+const REGIONS = [
+  "서울특별시",
+  "부산광역시",
+  "대구광역시",
+  "인천광역시",
+  "광주광역시",
+  "대전광역시",
+  "울산광역시",
+  "세종특별자치시",
+  "경기도",
+  "강원특별자치도",
+  "충청북도",
+  "충청남도",
+  "전라북도",
+  "전라남도",
+  "경상북도",
+  "경상남도",
+  "제주특별자치도",
+] as const;
+
 interface SearchProfileFormProps {
   onSubmit: (profile: SearchProfile) => void;
   loading?: boolean;
@@ -57,13 +77,18 @@ export function SearchProfileForm({ onSubmit, loading = false }: SearchProfileFo
             />
           </Field>
           <Field label="거주 지역">
-            <input
-              type="text"
+            <select
               value={region}
               onChange={(e) => setRegion(e.target.value)}
-              placeholder="예: 서울특별시"
               className={inputClass}
-            />
+            >
+              <option value="">전국</option>
+              {REGIONS.map((r) => (
+                <option key={r} value={r}>
+                  {r}
+                </option>
+              ))}
+            </select>
           </Field>
           <Field label="취업 상태">
             <select
