@@ -1,0 +1,121 @@
+/* ─── PolicyFit scrollytelling (landing only, scoping via #pf-*) ───
+   Dark lab aesthetic from AUBRIER, tokens remapped: lume cyan → brand
+   indigo #6366F1; verdict glow = tri-state (eligible/possible/ineligible).
+   These vars mirror app/globals.css — single source there, mirror here. */
+
+#pf-gl { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; display: block; }
+#pf-dof, #pf-vignette { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+#pf-dof { background: radial-gradient(ellipse 62% 55% at 50% 46%, transparent 55%, rgba(11, 11, 18, 0.55) 100%); }
+#pf-vignette { background: radial-gradient(ellipse 120% 90% at 50% 40%, transparent 60%, rgba(0, 0, 0, 0.5) 100%); }
+
+#pf-chrome {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 30;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 28px 14px;
+  border-bottom: 1px solid rgba(237, 233, 226, 0.16);
+  background: linear-gradient(rgba(11, 11, 18, 0.35), rgba(11, 11, 18, 0));
+  color: #ede9e2;
+}
+.pf-wordmark { font-weight: 800; font-size: 21px; letter-spacing: 0.02em; color: #ede9e2; text-decoration: none; }
+.pf-wordmark-en { font-weight: 600; font-size: 10px; letter-spacing: 0.34em; color: #8f8b82; margin-left: 10px; vertical-align: 2px; }
+#pf-chrome nav { display: flex; align-items: center; gap: 22px; }
+#pf-chrome nav a { color: #8f8b82; text-decoration: none; transition: color 0.25s; }
+#pf-chrome nav a:hover { color: #ede9e2; }
+#pf-phase { color: #a5b4fc; text-shadow: 0 0 14px rgba(99, 102, 241, 0.55); min-width: 110px; text-align: right; }
+
+.pf-micro { font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 500; }
+
+#pf-hero {
+  position: fixed; inset: 0; z-index: 10;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  pointer-events: none; transition: opacity 0.5s; text-align: center; padding: 0 6vw;
+}
+.pf-kicker { color: #8f8b82; margin-bottom: 26px; }
+.pf-title { display: flex; flex-direction: column; gap: 6px; }
+.pf-title-line {
+  font-weight: 800; font-size: clamp(40px, 8vw, 92px); line-height: 1.08; letter-spacing: -0.02em; color: #ede9e2;
+  opacity: 0; animation: pf-line-in 0.7s ease forwards;
+}
+.pf-title-line:nth-child(2) { animation-delay: 0.35s; color: #c7d2fe; text-shadow: 0 0 34px rgba(99, 102, 241, 0.45); }
+@keyframes pf-line-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.pf-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.pf-sub { margin-top: 30px; color: #8f8b82; opacity: 0; animation: pf-line-in 0.8s ease 0.9s forwards; }
+
+#pf-hint { position: fixed; left: 28px; bottom: 26px; z-index: 20; color: #8f8b82; }
+#pf-pill {
+  position: fixed; right: 28px; bottom: 26px; z-index: 20;
+  border: 1px solid rgba(237, 233, 226, 0.28); border-radius: 999px; padding: 9px 18px;
+  color: #ede9e2; background: rgba(23, 23, 29, 0.5); backdrop-filter: blur(6px); cursor: pointer;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+#pf-pill:hover { border-color: #6366f1; box-shadow: 0 0 24px rgba(99, 102, 241, 0.35); }
+
+#pf-rail { position: fixed; right: 28px; top: 50%; transform: translateY(-50%); z-index: 20; width: 250px; display: flex; gap: 14px; justify-content: flex-end; }
+.pf-rail-num {
+  font-weight: 200; font-size: 46px; line-height: 1; color: transparent;
+  -webkit-text-stroke: 1px #8f8b82; min-width: 64px; text-align: right;
+}
+.pf-rail-copy { max-width: 172px; }
+.pf-rail-title { color: #ede9e2; margin-bottom: 6px; }
+.pf-rail-caption { font-size: 12.5px; line-height: 1.55; color: #8f8b82; }
+.pf-spec { margin-top: 14px; border-top: 1px solid rgba(237, 233, 226, 0.16); padding-top: 10px; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.pf-spec .pf-micro { color: #8f8b82; font-size: 10px; }
+.pf-spec span:last-child { color: #c7d2fe; font-variant-numeric: tabular-nums; font-weight: 700; font-size: 15px; text-shadow: 0 0 10px rgba(99, 102, 241, 0.5); }
+
+#pf-finale {
+  position: fixed; inset: 0; z-index: 10;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+  opacity: 0; pointer-events: none;
+}
+.pf-finale-seal {
+  color: #4ade80; font-weight: 800; font-size: clamp(44px, 9vw, 110px); letter-spacing: 0.04em;
+  text-shadow: 0 0 18px rgba(34, 197, 94, 0.65), 0 0 60px rgba(34, 197, 94, 0.35);
+  border: 3px solid rgba(34, 197, 94, 0.85); border-radius: 18px; padding: 0.14em 0.42em;
+}
+.pf-finale-caption { color: #8f8b82; max-width: 320px; text-align: center; line-height: 1.6; font-size: 13px; }
+
+/* the app section where the journey lands — paper bg, normal flow */
+#pf-form-section { position: relative; z-index: 5; background: #0b0b12; }
+#pf-form-section .pf-app { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
+@media (prefers-color-scheme: light) {
+  #pf-form-section { background: #ffffff; }
+}
+
+/* annotations */
+.pf-anno {
+  position: fixed; z-index: 25; display: flex; align-items: center; gap: 10px;
+  background: rgba(23, 23, 29, 0.72); border: 1px solid rgba(237, 233, 226, 0.16);
+  backdrop-filter: blur(8px); padding: 7px 12px; border-radius: 3px; cursor: pointer;
+  color: #ede9e2; font-size: 11px; letter-spacing: 0.06em; text-align: left;
+}
+.pf-anno::before {
+  content: ""; width: 26px; height: 1px; order: -1;
+  background: linear-gradient(90deg, #6366f1, transparent);
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.6);
+}
+.pf-anno-sub { color: #8f8b82; }
+.pf-anno:focus-visible, #pf-pill:focus-visible { outline: 2px solid #6366f1; outline-offset: 3px; }
+
+#pf-legend { display: none; }
+.pf-chip {
+  border: 1px solid rgba(237, 233, 226, 0.16); background: rgba(23, 23, 29, 0.7);
+  border-radius: 999px; padding: 5px 11px; font-size: 10.5px; letter-spacing: 0.08em; color: #8f8b82;
+}
+
+/* journey is over and the app section owns the viewport — fade all fixed chrome out */
+.pf-past { opacity: 0 !important; pointer-events: none !important; transition: opacity 0.4s; }
+
+@media (max-width: 860px) {
+  #pf-rail .pf-rail-caption { display: none; }
+  #pf-rail { width: auto; right: 20px; }
+  .pf-spec { display: none; }
+  .pf-anno { display: none !important; }
+  #pf-legend { display: none; flex-wrap: wrap; gap: 8px; position: fixed; left: 20px; bottom: 64px; z-index: 25; max-width: 58vw; }
+  #pf-hint { left: 20px; }
+  #pf-pill { right: 20px; }
+  #pf-chrome { padding: 14px 20px 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-title-line, .pf-sub { animation: none; opacity: 1; }
+}

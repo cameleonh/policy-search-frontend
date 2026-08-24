@@ -39,6 +39,7 @@ export function SearchProfileForm({ onSubmit, loading = false }: SearchProfileFo
   const [region, setRegion] = useState("");
   const [employmentStatus, setEmploymentStatus] = useState("");
   const [incomeBracket, setIncomeBracket] = useState("");
+  const [isStudent, setIsStudent] = useState(false);
 
   const [isBusinessOwner, setIsBusinessOwner] = useState(false);
   const [businessRegion, setBusinessRegion] = useState("");
@@ -53,6 +54,7 @@ export function SearchProfileForm({ onSubmit, loading = false }: SearchProfileFo
       region: region || undefined,
       employment_status: employmentStatus || undefined,
       income_bracket: incomeBracket || undefined,
+      is_student: isStudent,
       is_business_owner: isBusinessOwner,
       business_region: businessRegion || undefined,
       industry: industry || undefined,
@@ -109,10 +111,22 @@ export function SearchProfileForm({ onSubmit, loading = false }: SearchProfileFo
               className={inputClass}
             >
               <option value="">선택 안함</option>
-              <option value="전액">전액</option>
               <option value="3000만원 이하">3000만원 이하</option>
               <option value="5000만원 이하">5000만원 이하</option>
+              <option value="7000만원 이하">7000만원 이하</option>
+              <option value="8000만원 이상">8000만원 이상</option>
             </select>
+          </Field>
+          <Field label="학적">
+            <label className="flex h-[38px] items-center gap-2 text-sm text-neutral-700 dark:text-neutral-300">
+              <input
+                type="checkbox"
+                checked={isStudent}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setIsStudent(e.target.checked)}
+                className="h-4 w-4 rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
+              />
+              대학(원) 재학 중
+            </label>
           </Field>
         </div>
       </fieldset>
