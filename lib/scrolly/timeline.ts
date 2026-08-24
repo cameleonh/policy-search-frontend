@@ -86,6 +86,7 @@ export class Timeline {
   private parallax = new THREE.Vector2(0, 0);
   private paused = false;
   private past = false;
+  private consumed = false;
 
   constructor(scene: SceneBundle) {
     this.scene = scene;
@@ -121,9 +122,10 @@ export class Timeline {
   }
 
   private onScroll = () => {
+    if (this.consumed) return;
     this.progress = clamp01(scrollY / this.journeyEnd()) * 5;
-    // past the journey, the app section owns the viewport — hide all fixed chrome
-    this.past = scrollY > this.journeyEnd() + innerHeight * 0.25;
+    // the app section owns the viewport once the form top reaches ~20% from top
+    this.past = scrollY > this.journeyEnd() + innerHeight * 0.8;
     for (const id of ["pf-chrome", "pf-rail", "pf-pill", "pf-hint", "pf-hero"]) {
       const elx = document.getElementById(id);
       if (!elx) continue;
@@ -136,7 +138,26 @@ export class Timeline {
         elx.style.pointerEvents = "";
       }
     }
+    if (this.past) this.consume();
   };
+
+  /**
+   * One-way intro: once the search screen is reached, the journey collapses
+   * out of the scroll space (no hijacking — the space above simply ceases to
+   * exist) and the 3D loop stops for good. Reload restores the intro.
+   */
+  private consume() {
+    this.consumed = true;
+    const space = document.getElementById("pf-scroll-space");
+    const removed = space?.offsetHeight ?? 0;
+    if (space) space.style.height = "0px";
+    scrollTo({ top: Math.max(0, scrollY - removed), behavior: "instant" });
+    for (const id of ["pf-gl", "pf-dof", "pf-vignette", "pf-chrome", "pf-rail", "pf-pill", "pf-hint", "pf-hero", "pf-finale", "pf-legend"]) {
+      document.getElementById(id)?.style.setProperty("display", "none");
+    }
+    this.annoLayer.remove();
+    this.paused = true;
+  }
 
   private onResize = () => {
     this.scene.resize();

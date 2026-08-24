@@ -42,7 +42,7 @@ function buildConditions(mats: MatSet): PhaseGroup {
   const chips: [string, [number, number]][] = [
     ["생년월일", [-0.62, 0.42]],
     ["거주지", [0.58, 0.5]],
-    ["고용 상태", [-0.5, -0.48]],
+    ["고용·학적", [-0.5, -0.48]],
     ["소득 구간", [0.54, -0.52]],
   ];
   chips.forEach(([label, [x, z]], i) => {

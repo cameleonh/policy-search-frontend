@@ -39,7 +39,6 @@ export function SearchProfileForm({ onSubmit, loading = false }: SearchProfileFo
   const [region, setRegion] = useState("");
   const [employmentStatus, setEmploymentStatus] = useState("");
   const [incomeBracket, setIncomeBracket] = useState("");
-  const [isStudent, setIsStudent] = useState(false);
 
   const [isBusinessOwner, setIsBusinessOwner] = useState(false);
   const [businessRegion, setBusinessRegion] = useState("");
@@ -49,12 +48,17 @@ export function SearchProfileForm({ onSubmit, loading = false }: SearchProfileFo
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    // 대학생/대학원생 classify as 미취업 in the source data; 재학 구간은
+    // student_level로 전달해 석·박사(대학원) 정책과 구분 매칭한다.
+    const studentLevel =
+      employmentStatus === "대학생" ? "undergrad" : employmentStatus === "대학원생" ? "grad" : null;
+    const employment = employmentStatus === "" ? undefined : studentLevel ? "미취업" : employmentStatus;
     onSubmit({
       birth_date: birthDate || undefined,
       region: region || undefined,
-      employment_status: employmentStatus || undefined,
+      employment_status: employment,
       income_bracket: incomeBracket || undefined,
-      is_student: isStudent,
+      student_level: studentLevel,
       is_business_owner: isBusinessOwner,
       business_region: businessRegion || undefined,
       industry: industry || undefined,
@@ -102,6 +106,8 @@ export function SearchProfileForm({ onSubmit, loading = false }: SearchProfileFo
               <option value="미취업">미취업</option>
               <option value="재직중">재직중</option>
               <option value="자영업">자영업</option>
+              <option value="대학생">대학생</option>
+              <option value="대학원생">대학원생</option>
             </select>
           </Field>
           <Field label="소득 구간">
@@ -116,17 +122,6 @@ export function SearchProfileForm({ onSubmit, loading = false }: SearchProfileFo
               <option value="7000만원 이하">7000만원 이하</option>
               <option value="8000만원 이상">8000만원 이상</option>
             </select>
-          </Field>
-          <Field label="학적">
-            <label className="flex h-[38px] items-center gap-2 text-sm text-neutral-700 dark:text-neutral-300">
-              <input
-                type="checkbox"
-                checked={isStudent}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setIsStudent(e.target.checked)}
-                className="h-4 w-4 rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
-              />
-              대학(원) 재학 중
-            </label>
           </Field>
         </div>
       </fieldset>
