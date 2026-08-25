@@ -1,6 +1,6 @@
-import PolicyFitLanding from "@/components/PolicyFitLanding";
-import "./policyfit.css";
+import MainSearchApp from "@/components/MainSearchApp";
 
 export default function HomePage() {
-  return <PolicyFitLanding />;
+  return <MainSearchApp />;
 }
+

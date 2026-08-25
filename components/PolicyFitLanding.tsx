@@ -107,22 +107,28 @@ function SearchSection() {
   const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
   const [hasSearched, setHasSearched] = useState(false);
+  const [lastProfile, setLastProfile] = useState<SearchProfile | null>(null);
 
   async function handleSearch(profile: SearchProfile) {
     setLoading(true);
     setError(null);
+    setLastProfile(profile);
     try {
       const res = await fetch("/api/search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(profile),
       });
-      if (!res.ok) throw new Error(`검색 실패: ${res.status}`);
+      if (!res.ok) throw new Error(`검색 서버 오류 (상태 코드: ${res.status})`);
       const data = (await res.json()) as SearchResponse;
       setResults(data.results);
       setTotal(data.total);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "검색 중 오류가 발생했습니다.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "정책 정보를 검색하는 도중 네트워크 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
+      );
       setResults([]);
       setTotal(0);
     } finally {
@@ -134,46 +140,75 @@ function SearchSection() {
   return (
     <main className="pf-app mx-auto max-w-3xl px-6 py-20">
       <header className="mb-10 space-y-4">
-        <p className="text-sm font-medium uppercase tracking-wider text-brand-600 dark:text-brand-400">
-          정책핏 · 통합 정책 검색
+        <p className="text-sm font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-400">
+          정책핏 (PolicyFit) · 통합 정책 맞춤 검색
         </p>
-        <h2 className="text-4xl font-bold leading-tight tracking-tight text-neutral-900 dark:text-neutral-50">
-          나에게 맞는 정책을
+        <h2 className="text-3xl sm:text-4xl font-bold leading-tight tracking-tight text-neutral-900 dark:text-neutral-50">
+          나에게 맞는 청년·소상공인 정책을
           <br />
-          한 번에 찾아보세요
+          한눈에 확인하세요
         </h2>
-        <p className="max-w-xl text-lg leading-relaxed text-neutral-600 dark:text-neutral-400">
-          청년 개인 지원과 소상공인 사업체 지원을 한 화면에서 검색합니다. 모르는
-          항목은 비워두셔도 괜찮습니다.
+        <p className="max-w-xl text-base sm:text-lg leading-relaxed text-neutral-600 dark:text-neutral-400">
+          청년 개인 지원과 소상공인 사업체 지원을 한 번에 맞춤 검색합니다. 확인하기 어려운
+          항목은 비워두셔도 지원 가능성을 함께 찾아드립니다.
         </p>
       </header>
 
       <SearchProfileForm onSubmit={handleSearch} loading={loading} />
 
-      <section className="mt-10" aria-live="polite" aria-busy={loading}>
+      <section className="mt-12" aria-live="polite" aria-busy={loading}>
         {error && (
-          <p className="rounded-lg bg-ineligible-bg p-3 text-sm text-ineligible-text ring-1 ring-inset ring-ineligible-border">
-            {error}
-          </p>
+          <div className="rounded-xl border border-ineligible-border bg-ineligible-bg p-5 text-sm text-ineligible-text shadow-sm">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="font-bold flex items-center gap-1.5 text-base">
+                  <span aria-hidden="true">⚠️</span>
+                  <span>검색 요청을 처리하지 못했습니다</span>
+                </p>
+                <p className="mt-1 text-xs leading-relaxed">{error}</p>
+              </div>
+              {lastProfile && (
+                <button
+                  type="button"
+                  onClick={() => handleSearch(lastProfile)}
+                  className="shrink-0 rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-ineligible-text ring-1 ring-inset ring-ineligible-border hover:bg-neutral-50"
+                >
+                  다시 시도
+                </button>
+              )}
+            </div>
+          </div>
         )}
+
         {hasSearched && !loading && results.length === 0 && !error && (
-          <p className="text-neutral-500 dark:text-neutral-400">
-            검색 결과가 없습니다. 다른 조건으로 다시 시도해 보세요.
-          </p>
-        )}
-        {results.length > 0 && (
-          <>
-            <p className="mb-4 text-sm text-neutral-600 dark:text-neutral-400">
-              총 <span className="font-semibold text-neutral-900 dark:text-neutral-100">{total}</span>건
+          <div className="rounded-xl border border-neutral-200 bg-neutral-50/70 p-8 text-center dark:border-neutral-800 dark:bg-neutral-900/40">
+            <p className="text-2xl mb-2" aria-hidden="true">🔍</p>
+            <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
+              조건에 딱 맞는 정책을 찾지 못했습니다
+            </h3>
+            <p className="mt-2 text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 max-w-md mx-auto leading-relaxed">
+              거주 지역을 &apos;전국&apos;으로 변경하거나, 연소득 및 취업 상태 조건을 &apos;선택 안함&apos;으로 넓혀서 다시 검색해 보세요.
             </p>
+          </div>
+        )}
+
+        {results.length > 0 && (
+          <div>
+            <div className="mb-4 flex items-center justify-between border-b border-neutral-200 pb-3 dark:border-neutral-800">
+              <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
+                맞춤 판정 결과 총 <strong className="font-bold text-neutral-900 dark:text-neutral-100">{total}</strong>건
+              </p>
+              <span className="text-xs text-neutral-400">지원 가능 항목 우선 정렬</span>
+            </div>
             <div className="space-y-4">
               {results.map((result) => (
                 <PolicyCard key={result.result_id} result={result} />
               ))}
             </div>
-          </>
+          </div>
         )}
       </section>
     </main>
   );
 }
+

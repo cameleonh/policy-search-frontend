@@ -5,9 +5,9 @@ import type { PolicyDetail, PolicyResult } from "@policy-search/contracts";
 import { Badge } from "./Badge";
 
 const CATEGORY_LABEL: Record<string, string> = {
-  individual: "개인 지원",
-  business: "사업체 지원",
-  both: "개인·사업체",
+  individual: "청년 개인",
+  business: "소상공인 사업체",
+  both: "청년·사업체 통합",
 };
 
 interface PolicyCardProps {
@@ -50,121 +50,154 @@ export function PolicyCard({ result }: PolicyCardProps) {
   }
 
   return (
-    <article className="rounded-xl border border-neutral-200 bg-white shadow-card transition-shadow hover:shadow-card-hover dark:border-neutral-800 dark:bg-neutral-900">
-      <button
-        type="button"
-        onClick={toggleDetail}
-        aria-expanded={open}
-        className="flex w-full flex-wrap items-start justify-between gap-3 p-5 text-left"
-      >
-        <div className="min-w-0 flex-1">
-          <h3 className="text-lg font-bold leading-snug text-neutral-900 dark:text-neutral-50">
-            {policy_title}
-          </h3>
-          <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-            {result.topic && (
-              <span className="mr-1.5 inline-block rounded bg-brand-50 px-1.5 py-0.5 text-xs font-semibold text-brand-700 dark:bg-brand-900/40 dark:text-brand-300">
-                {result.topic}
+    <article className="group overflow-hidden rounded-2xl border border-neutral-200/90 bg-white shadow-sm transition-all duration-200 hover:border-brand-400/50 hover:shadow-md hover:shadow-brand-500/5 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-brand-500/40">
+      {/* Top Header Card Action */}
+      <div className="p-5 sm:p-6">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center rounded-lg bg-neutral-100 px-3 py-1 text-xs sm:text-sm font-bold text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
+                {CATEGORY_LABEL[category] ?? category}
               </span>
-            )}
-            {CATEGORY_LABEL[category] ?? category}
-            {agency && ` · ${agency}`}
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <span
-            className={[
-              "text-neutral-400 transition-transform dark:text-neutral-500",
-              open ? "rotate-180" : "",
-            ].join(" ")}
-            aria-hidden="true"
-          >
-            ▾
-          </span>
-          <Badge state={status} />
-        </div>
-      </button>
+              {result.topic && (
+                <span className="inline-flex items-center rounded-lg bg-brand-50 px-3 py-1 text-xs sm:text-sm font-bold text-brand-700 dark:bg-brand-950/70 dark:text-brand-300">
+                  {result.topic}
+                </span>
+              )}
+              {agency && (
+                <span className="text-xs sm:text-sm font-medium text-neutral-500 dark:text-neutral-400">
+                  {agency}
+                </span>
+              )}
+            </div>
 
-      <div className="px-5 pb-5">
-        {reasons.length > 0 && (
-          <ul className="flex flex-wrap gap-1.5">
-            {compactReasons(reasons).map((reason, i) => (
-              <li
-                key={i}
-                className={[
-                  "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset",
-                  reason.includes("충족")
-                    ? "bg-eligible-bg text-eligible-text ring-eligible-border"
-                    : "bg-neutral-100 text-neutral-600 ring-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:ring-neutral-700",
-                ].join(" ")}
-              >
-                <span aria-hidden="true">{reason.includes("충족") ? "✓" : "•"}</span>
-                <span>{reason}</span>
-              </li>
-            ))}
-          </ul>
-        )}
+            <h3 className="mt-3 text-xl font-extrabold leading-snug tracking-tight text-neutral-900 dark:text-neutral-50 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors sm:text-2xl">
+              {policy_title}
+            </h3>
+          </div>
 
-        {missing_info.length > 0 && (
-          <div className="mt-4 rounded-lg bg-possible-bg p-3 text-sm text-possible-text ring-1 ring-inset ring-possible-border">
-            <p className="font-semibold">확인 필요</p>
-            <p className="mt-0.5">{missing_info.join(", ")}</p>
+          <div className="flex shrink-0 items-center gap-2">
+            <Badge state={status} />
+          </div>
+        </div>
+
+        {/* Benefits Highlight Box */}
+        {benefits.length > 0 && (
+          <div className="mt-4 rounded-xl border border-brand-100/90 bg-brand-50/50 px-4 py-3 text-sm sm:text-base dark:border-brand-900/50 dark:bg-brand-950/30">
+            <div className="flex items-start gap-2.5">
+              <span className="text-brand-600 dark:text-brand-400 font-bold text-base">🎁</span>
+              <div className="font-medium text-neutral-900 dark:text-neutral-100">
+                <span className="font-bold text-brand-700 dark:text-brand-300">핵심 혜택: </span>
+                <span>{benefits.join(", ")}</span>
+              </div>
+            </div>
           </div>
         )}
 
-        {benefits.length > 0 && (
-          <p className="mt-3 text-sm text-neutral-700 dark:text-neutral-300">
-            <span className="font-semibold text-neutral-900 dark:text-neutral-100">혜택: </span>
-            {benefits.join(", ")}
-          </p>
+        {/* Reasons & Requirements Badges */}
+        {reasons.length > 0 && (
+          <div className="mt-4">
+            <ul className="flex flex-wrap gap-2" aria-label="판정 충족 조건">
+              {compactReasons(reasons).map((reason, i) => {
+                const isSatisfied = reason.includes("충족");
+                return (
+                  <li
+                    key={i}
+                    className={[
+                      "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs sm:text-sm font-medium",
+                      isSatisfied
+                        ? "bg-eligible-bg text-eligible-text ring-1 ring-inset ring-eligible-border"
+                        : "bg-neutral-100 text-neutral-600 ring-1 ring-inset ring-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:ring-neutral-700",
+                    ].join(" ")}
+                  >
+                    <span aria-hidden="true" className="font-bold">
+                      {isSatisfied ? "✓" : "•"}
+                    </span>
+                    <span>{reason}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         )}
 
+        {/* Missing Info Warning */}
+        {missing_info.length > 0 && (
+          <div className="mt-4 rounded-xl bg-possible-bg p-4 text-sm text-possible-text ring-1 ring-inset ring-possible-border">
+            <p className="font-bold flex items-center gap-2 text-sm sm:text-base">
+              <span aria-hidden="true">ℹ️</span>
+              <span>확인 필요 항목 (미입력 정보)</span>
+            </p>
+            <p className="mt-1.5 text-xs sm:text-sm leading-relaxed font-medium">
+              {missing_info.join(" · ")} 조건이 미입력되어 정확한 자격 검증을 위해 원문 공고 확인이 필요합니다.
+            </p>
+          </div>
+        )}
+
+        {/* Deadline Info */}
         {application_deadline && (
           <p
             className={[
-              "mt-2 text-sm font-medium",
+              "mt-3.5 text-sm sm:text-base font-medium",
               deadlineImminent
-                ? "text-ineligible-text"
+                ? "text-ineligible-text font-bold"
                 : "text-neutral-600 dark:text-neutral-400",
             ].join(" ")}
           >
-            <span className="font-semibold">신청 마감: </span>
+            <span className="font-bold text-neutral-800 dark:text-neutral-200">신청 마감일: </span>
             {formatDeadline(application_deadline)}
             {deadlineDays(application_deadline) != null && (
-              <span className="ml-1">({deadlineDays(application_deadline)}일 남음)</span>
+              <span className="ml-1.5 font-bold">({deadlineDays(application_deadline)}일 남음)</span>
             )}
           </p>
         )}
 
+        {/* Expandable Detail Section */}
         {open && (
-          <div className="mt-4 rounded-lg border border-neutral-200 p-4 text-sm dark:border-neutral-700">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-400 dark:text-neutral-500">
-              지원 조건 상세
+          <div className="mt-4 rounded-xl border border-neutral-200/80 bg-neutral-50/80 p-5 text-sm dark:border-neutral-800 dark:bg-neutral-900/60">
+            <p className="mb-3.5 text-xs sm:text-sm font-bold uppercase tracking-wider text-neutral-600 dark:text-neutral-300">
+              지원 조건 상세 내역
             </p>
-            {loading && <p className="text-neutral-500">불러오는 중…</p>}
+            {loading && <p className="text-neutral-500 text-sm">상세 조건을 불러오는 중입니다…</p>}
             {!loading && detail && <DetailGrid detail={detail} />}
             {!loading && !detail && (
-              <p className="text-neutral-500">상세 조건 정보가 없습니다.</p>
+              <p className="text-neutral-500 text-sm">상세 조건 정보가 없습니다.</p>
             )}
           </div>
         )}
 
-        <footer className="mt-4 flex flex-wrap items-center gap-3 border-t border-neutral-100 pt-3 text-xs dark:border-neutral-800">
-          {announcement_url && (
-            <a
-              href={announcement_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium text-brand-600 hover:underline dark:text-brand-400"
-            >
-              공식 공고 ↗
-            </a>
-          )}
-          {evidence.length > 0 && (
-            <span className="text-neutral-400 dark:text-neutral-500">
-              근거: {evidence.map((e) => e.evidence_id).join(", ")}
+        {/* Action Footer */}
+        <footer className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-neutral-100 pt-4 text-sm dark:border-neutral-800">
+          <button
+            type="button"
+            onClick={toggleDetail}
+            aria-expanded={open}
+            className="inline-flex items-center gap-1.5 font-bold text-neutral-700 hover:text-brand-600 dark:text-neutral-300 dark:hover:text-brand-400"
+          >
+            <span>{open ? "조건 상세 접기" : "상세 조건 보기"}</span>
+            <span className={`text-xs transition-transform ${open ? "rotate-180" : ""}`}>
+              ▼
             </span>
-          )}
+          </button>
+
+          <div className="flex items-center gap-3">
+            {evidence.length > 0 && (
+              <span className="text-neutral-500 dark:text-neutral-400 text-xs sm:text-sm">
+                출처: {evidence.map((e) => e.evidence_id.replace("src-", "")).join(", ")}
+              </span>
+            )}
+            {announcement_url && (
+              <a
+                href={announcement_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-neutral-100 px-4 py-2 text-sm font-bold text-neutral-900 transition-colors hover:bg-brand-600 hover:text-white dark:bg-neutral-800 dark:text-neutral-100 dark:hover:bg-brand-500"
+              >
+                <span>공식 공고 확인</span>
+                <span aria-hidden="true">↗</span>
+              </a>
+            )}
+          </div>
         </footer>
       </div>
     </article>
@@ -174,33 +207,30 @@ export function PolicyCard({ result }: PolicyCardProps) {
 function DetailGrid({ detail }: { detail: PolicyDetail }) {
   const age =
     detail.age_min != null || detail.age_max != null
-      ? `만 ${detail.age_min ?? "?"}~${detail.age_max ?? "?"}세`
-      : null;
+      ? `만 ${detail.age_min ?? "제한 없음"} ~ ${detail.age_max ?? "제한 없음"}세`
+      : "연령 제한 없음";
   const period =
     detail.apply_start || detail.apply_end
-      ? `${detail.apply_start ?? "?"} ~ ${detail.apply_end ?? "?"}`
-      : null;
+      ? `${detail.apply_start ?? "시작일 미정"} ~ ${detail.apply_end ?? "마감일 미정"}`
+      : "상시 모집 또는 공고문 참조";
 
   const rows: [string, string | null][] = [
     ["신청 기간", period],
-    ["나이", age],
-    ["고용 상태", detail.employment.length > 0 ? detail.employment.join(", ") : null],
-    ["소득 기준", detail.income_max ? `연소득 ${Number(detail.income_max).toLocaleString()}만원 이하` : null],
-    ["지역", detail.region],
-    ["학력", detail.education],
+    ["대상 연령", age],
+    ["고용 상태", detail.employment.length > 0 ? detail.employment.join(", ") : "제한 없음 (모든 상태)"],
+    ["소득 기준", detail.income_max ? `연소득 ${Number(detail.income_max).toLocaleString()}만 원 이하` : "소득 제한 없음"],
+    ["대상 지역", detail.region || "전국"],
+    ["학력 기준", detail.education || "학력 무관"],
   ];
-  const present = rows.filter(([, v]) => v != null && v !== "");
-
-  if (present.length === 0) return <p className="text-neutral-500">상세 조건 정보가 없습니다.</p>;
 
   return (
-    <dl className="grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2">
-      {present.map(([label, value]) => (
+    <dl className="grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2 text-sm">
+      {rows.map(([label, value]) => (
         <div key={label} className="flex gap-2">
-          <dt className="w-20 shrink-0 font-medium text-neutral-500 dark:text-neutral-400">
+          <dt className="w-24 shrink-0 font-bold text-neutral-500 dark:text-neutral-400">
             {label}
           </dt>
-          <dd className="min-w-0 break-words text-neutral-800 dark:text-neutral-200">{value}</dd>
+          <dd className="min-w-0 break-words font-semibold text-neutral-900 dark:text-neutral-100">{value}</dd>
         </div>
       ))}
     </dl>
@@ -228,7 +258,7 @@ function formatDeadline(deadline: string): string {
   const date = new Date(deadline);
   if (Number.isNaN(date.getTime())) return deadline;
   const formatted = `${date.getMonth() + 1}월 ${date.getDate()}일`;
-  if (days != null && days <= 7) return `${formatted} (임박)`;
+  if (days != null && days <= 7) return `${formatted} (마감 임박)`;
   return formatted;
 }
 
